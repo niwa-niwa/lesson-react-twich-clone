@@ -12,8 +12,7 @@ class GoogleAuth extends React.Component{
                 scope:'email'
             }).then(()=>{
                 this.auth = window.gapi.auth2.getAuthInstance()
-                console.log(this.auth)
-                // 
+                
                 this.onAuthChange(this.auth.isSignedIn.get())
 
                 // 常駐してログイン状態を監視している。ログイン状態が変更されたときに実行する関数を引数に渡す。引数の関数に渡される引数はboolean(仕様)
