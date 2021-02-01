@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import Modal from '../Modal'
 import history from '../../history'
-import { fetchStream } from '../../actions'
+import { fetchStream, deleteStream } from '../../actions'
 
 
 class StreamDelete extends React.Component{
@@ -15,26 +16,36 @@ class StreamDelete extends React.Component{
             // Fragment tag is just binding elements the tag is not appeared in HTML source
             <React.Fragment>
                 <div>
-                    <button className="ui button negative">Delete</button>
-                    <button className="ui button">Cancel</button>
+                    <button onClick={() => this.props.deleteStream(this.props.match.params.id)} className="ui button negative">Delete</button>
+                    <Link to='/' className="ui button">Cancel</Link>
                 </div>
             </React.Fragment>
         )
     }
 
+    renderContent() {
+        if(!this.props.stream){
+            //削除後に再レンダーされる時に入るエラー用?
+            return 'Are you sure you want to delete this stream?'
+        }
+
+        return `Are you sure you want to delete the stream with title: ${this.props.stream.title}`
+    }
+
     render(){
         return (
-            <div>
-                StreamDelete
-                <Modal
-                    title='Delete Stream'
-                    content="Are you sure you want to delete this stream?"
-                    actions={this.renderActions()}
-                    onDismiss={() => history.push('/')}
-                />
-            </div>
+            <Modal
+                title='Delete Stream'
+                content={this.renderContent()}
+                actions={this.renderActions()}
+                onDismiss={() => history.push('/')}
+            />
         )
     }
 }
 
-export default connect(null, { fetchStream })(StreamDelete)
+const mapStateToProps = (state, ownProps) => {
+    return { stream: state.streams[ownProps.match.params.id]}
+}
+
+export default connect(mapStateToProps, { fetchStream,deleteStream })(StreamDelete)
